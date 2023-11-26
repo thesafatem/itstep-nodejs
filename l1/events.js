@@ -46,15 +46,3 @@ myEmitter.emit('a');
 myEmitter.emit('a');
 
 // { name: 'Temir', marks: [1, 2, 3]};
-
-students = [];
-
-myEmitter.addListener('Add student', (name) => {
-	students.push({
-		name: name,
-		marks: [],
-	});
-});
-
-myEmitter.emit('Add student', 'Polina');
-console.log(students);

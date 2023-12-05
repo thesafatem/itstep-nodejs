@@ -1,0 +1,27 @@
+<html>
+
+<head></head>
+
+<body>
+	{{> menu}}
+	<ul>
+	{{#each films}}
+		{{#with this}}
+			<li><a href="/films/{{@index}}">{{name}}</a></li>
+			<ul>
+				<li>{{year}}</li>
+				<li>{{director}}</li>
+				<li>Actors:</li>
+				<ul>
+				{{#each actors}}
+					<li>{{this}}</li>
+				{{/each}}
+				</ul>
+			</ul>
+		{{/with}}
+	{{/each}}
+	</ul>
+	{{> footer}}
+</body>
+
+</html>

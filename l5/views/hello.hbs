@@ -1,0 +1,11 @@
+<html>
+	<head></head>
+	<body>
+		{{> menu}}
+		<h1>You are great students!</h1>
+		{{#each students}}
+			<li>{{@index}} - {{this}}</li>
+		{{/each}}
+		{{> footer}}
+	</body>
+</html>

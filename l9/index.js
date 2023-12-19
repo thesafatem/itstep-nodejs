@@ -36,12 +36,59 @@ const Director = sequelize.define('director', {
 	},
 });
 
+const Actor = sequelize.define('actor', {
+	id: {
+		type: Sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true,
+	},
+	name: {
+		type: Sequelize.STRING(200),
+	},
+});
+
+const FilmActor = sequelize.define('film_actor', {
+	filmId: {
+		type: Sequelize.INTEGER,
+	},
+	actorId: {
+		type: Sequelize.INTEGER,
+	},
+});
+
+// filmId = 2
+// actors = [1, 3]
+// filmId | actorId
+//   2         1
+//   2         3
+
+// select actors.name, films.name from actors
+// join film_actors
+// on actors.id = film_actors.actorId
+// join films
+// on films.id = film_actors.filmId
+
+// Actor.findAll({
+// 	include: [
+// 		{
+// 			model: FilmActor,
+// 			include: [
+// 				{
+// 					model: Film,
+// 				},
+// 			],
+// 		},
+// 	],
+// });
+
 // select * from films
 // join directors
 // on films.directorId = directors.id
 
 Film.belongsTo(Director, { foreignKey: 'directorId' });
 Director.hasMany(Film, { foreignKey: 'directorId' });
+Actor.hasMany(FilmActor, { foreignKey: 'actorId' });
+FilmActor.belongsTo(Film, { foreignKey: 'filmId' });
 
 sequelize.sync().then((result) => {
 	console.log('DB is connected!');
@@ -52,14 +99,21 @@ app.use(express.json());
 // https://learn.javascript.ru/destructuring-assignment
 
 app.post('/films', async (req, res) => {
-	const { title, year, directorId } = req.body;
-	let film = await Film.create({
+	const { title, year, directorId, actors } = req.body;
+	const film = await Film.create({
 		title,
 		year,
 		directorId,
 	});
 
-	res.json(film);
+	for (let actor of actors) {
+		await FilmActor.create({
+			filmId: film.id,
+			actorId: actor,
+		});
+	}
+
+	return res.status(201).json(film);
 });
 
 app.get('/films', async (req, res) => {
@@ -80,6 +134,11 @@ app.get('/films', async (req, res) => {
 	// 		year: year,
 	// 	},
 	// });
+
+	// select * from films
+	// join directors
+	// on films.directorId = directors.id
+
 	const films = await Film.findAll({
 		include: [
 			{
@@ -167,6 +226,52 @@ app.get('/directors', async (req, res) => {
 	});
 	res.status(200).json({
 		directors,
+	});
+});
+
+app.delete('/directors/:id', async (req, res) => {
+	const id = req.params.id; // id = 2
+	// delete from films
+	// where directorId = 2
+	await Film.destroy({
+		where: {
+			directorId: id,
+		},
+	});
+	await Director.destroy({
+		where: {
+			id,
+		},
+	});
+	return res.status(200).json({
+		message: 'ok',
+	});
+});
+
+app.post('/actors', async (req, res) => {
+	const name = req.body.name;
+	const actor = await Actor.create({ name });
+	return res.status(201).json({
+		actor,
+	});
+});
+
+app.get('/actors', async (req, res) => {
+	const actors = await Actor.findAll({
+		include: [
+			{
+				model: FilmActor,
+				include: [
+					{
+						model: Film,
+					},
+				],
+			},
+		],
+	});
+
+	return res.status(200).json({
+		actors,
 	});
 });
 

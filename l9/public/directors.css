@@ -1,8 +1,14 @@
 p {
-	font-style: underline;
-	color: red;
+  font-style: italic;
+  color: green;
 }
 
 h1 {
-	color: green;
+  color: #F0438C;
 }
+
+p {
+  background-color: red;
+}
+
+/*# sourceMappingURL=directors.css.map */

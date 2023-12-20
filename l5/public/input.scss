@@ -1,0 +1,10 @@
+$red-color: red;
+$green-color: green;
+
+li {
+	color: $red-color;
+
+	a {
+		font-style: italic;
+	}
+}

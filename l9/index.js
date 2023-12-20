@@ -1,7 +1,12 @@
 const express = require('express');
 const Sequelize = require('sequelize');
+const hbs = require('hbs');
 
 const app = express();
+
+app.set('view engine', 'hbs');
+
+app.use(express.static('public'));
 
 const sequelize = new Sequelize({
 	storage: 'l9.db',
@@ -146,7 +151,10 @@ app.get('/films', async (req, res) => {
 			},
 		],
 	});
-	return res.json(films);
+	// return res.json(films);
+	return res.render('films.hbs', {
+		films,
+	});
 });
 
 app.get('/films/:id', async (req, res) => {
@@ -224,7 +232,8 @@ app.get('/directors', async (req, res) => {
 			},
 		],
 	});
-	res.status(200).json({
+	// res.status(200).json(directors);
+	return res.render('directors.hbs', {
 		directors,
 	});
 });

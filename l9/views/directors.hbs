@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/directors.css">
+	</head>
+	<body>
+		<h1>Directors</h1>
+		<ul>
+			{{#each directors}}
+				<li>
+					{{#with this}}
+						<p>{{name}}</p>
+						<ul>
+							{{#each films}}
+								<li>{{this.title}}</li>
+							{{/each}}
+						</ul>
+					{{/with}}
+				</li>
+			{{/each}}
+		</ul>
+	</body>
+</html>

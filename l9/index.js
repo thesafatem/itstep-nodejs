@@ -1,6 +1,7 @@
 const express = require('express');
 const Sequelize = require('sequelize');
 const hbs = require('hbs');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -61,35 +62,6 @@ const FilmActor = sequelize.define('film_actor', {
 	},
 });
 
-// filmId = 2
-// actors = [1, 3]
-// filmId | actorId
-//   2         1
-//   2         3
-
-// select actors.name, films.name from actors
-// join film_actors
-// on actors.id = film_actors.actorId
-// join films
-// on films.id = film_actors.filmId
-
-// Actor.findAll({
-// 	include: [
-// 		{
-// 			model: FilmActor,
-// 			include: [
-// 				{
-// 					model: Film,
-// 				},
-// 			],
-// 		},
-// 	],
-// });
-
-// select * from films
-// join directors
-// on films.directorId = directors.id
-
 Film.belongsTo(Director, { foreignKey: 'directorId' });
 Director.hasMany(Film, { foreignKey: 'directorId' });
 Actor.hasMany(FilmActor, { foreignKey: 'actorId' });
@@ -99,7 +71,9 @@ sequelize.sync().then((result) => {
 	console.log('DB is connected!');
 });
 
-app.use(express.json());
+// app.use(express.json());
+
+app.use(bodyParser.urlencoded());
 
 // https://learn.javascript.ru/destructuring-assignment
 
@@ -217,6 +191,7 @@ app.put('/films/:id', async (req, res) => {
 });
 
 app.post('/directors', async (req, res) => {
+	console.log(req.body);
 	const { name } = req.body;
 	const director = await Director.create({ name });
 	res.status(201).json({
